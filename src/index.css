@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Geist Sans font */
+@import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@300;400;500;600&display=swap');
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+
+    /* Z-index layers */
+    --z-overlay: 40;
+    --z-modal: 50;
+    --z-expanded-card: 45;
+  }
+ 
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scrollbar-gutter: stable;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background: linear-gradient(180deg, #111111, #000000);
+    font-family: 'Geist Sans', system-ui, sans-serif;
+  }
+}
+
+/* Custom scrollbar for terminal feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded hover:bg-white/20 transition-colors;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Prevent text selection */
+.no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Task card states */
+.task-card {
+  @apply relative backdrop-blur-lg rounded-lg border transition-all duration-200;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1);
+}
+
+.task-card--expanded {
+  z-index: var(--z-expanded-card);
+  @apply shadow-2xl;
+}
+
+.task-card--collapsed {
+  @apply hover:shadow-xl cursor-pointer hover:scale-[1.02] hover:-translate-y-0.5;
+}
+
+/* Task card hover effects */
+.task-card:hover {
+  box-shadow: 0 8px 32px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Markdown content styles */
+.prose {
+  @apply text-base leading-relaxed;
+}
+
+.prose h2 {
+  @apply mt-8 mb-4 text-xl font-semibold text-white;
+}
+
+.prose h3 {
+  @apply mt-6 mb-3 text-lg font-medium text-white;
+}
+
+.prose p {
+  @apply mb-4 text-gray-300;
+}
+
+.prose ul {
+  @apply mb-6 space-y-3 text-gray-300;
+  list-style: none;
+  padding-left: 0.5rem;
+}
+
+.prose ul li {
+  @apply relative pl-6;
+  line-height: 1.5;
+}
+
+.prose ul li::before {
+  content: "";
+  @apply absolute left-0 top-[0.8em] w-3 h-3 bg-blue-500/50 rounded-full;
+  transform: translateY(-50%);
+}
+
+.prose ol {
+  @apply mb-6 space-y-3 pl-6 text-gray-300;
+  counter-reset: item;
+  list-style: none;
+}
+
+.prose ol li {
+  @apply relative pl-2;
+  line-height: 1.5;
+  counter-increment: item;
+}
+
+.prose ol li::before {
+  @apply absolute -left-6 top-[0.3em] flex items-center justify-center w-5 h-5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium;
+  content: counter(item);
+}
+
+.prose code {
+  @apply px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 text-sm;
+}
+
+.prose pre {
+  @apply p-4 my-4 rounded-lg bg-black/50 border border-white/10 overflow-x-auto;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-gray-300;
+}
+
+.prose blockquote {
+  @apply my-6 border-l-2 border-blue-500/50 bg-blue-500/5 rounded-r-lg py-2 px-4;
+}
+
+.prose blockquote p {
+  @apply mb-0;
+}
+
+.prose a {
+  @apply text-blue-400 hover:text-blue-300 transition-colors no-underline;
+}
+
+.prose table {
+  @apply w-full my-6 border-collapse;
+}
+
+.prose th {
+  @apply px-4 py-2 text-left border border-white/10 bg-white/5 text-white font-medium;
+}
+
+.prose td {
+  @apply px-4 py-2 border border-white/10 text-gray-300;
+}
+
+.prose hr {
+  @apply my-8 border-white/10;
+}
+
+.prose strong {
+  @apply text-white font-semibold;
+}
+
+.prose img {
+  @apply rounded-lg border border-white/10;
+}

@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isCurrentUser(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isCurrentUser(userId);
+      allow read: if isAdmin();
+      allow create: if isCurrentUser(userId) && 
+                     request.resource.data.keys().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'role', 'createdAt']) &&
+                     request.resource.data.uid == userId &&
+                     request.resource.data.role == 'user';
+      allow update: if isCurrentUser(userId) && 
+                     !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']);
+      allow update: if isAdmin();
+    }
+    
+    // Tasks collection
+    match /tasks/{taskId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Logs collection
+    match /logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // WhatsApp chats collection
+    match /chats_ace/{chatId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // WhatsApp messages collection
+    match /messages_ace/{messageId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Summaries collection
+    match /summaries/{summaryId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Feedback collection
+    match /feedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
